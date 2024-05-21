@@ -79,7 +79,7 @@ const Home = () => {
     <div>
       <h1>Advanced Vapi Voice Assistant with AutoStart and Functions</h1>
       <VapiComponent
-        publicKey="your-public-key"
+        publicKey={process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || ''}
         assistantConfig={assistantConfig}
         onEvents={handleEvents}
         startButtonLabel="Initiate Call"
@@ -93,7 +93,7 @@ const Home = () => {
         onMuteToggle={(isMuted) => console.log(`Mute toggled: ${isMuted}`)}
         onTranscriptUpdate={handleTranscriptUpdate}
         onFunctionCall={handleFunctionCall}
-        autoStart={true}  // Automatically starts the call
+        autoStart={false}  // Automatically starts the call
         styles={customStyles}
       />
     </div>
