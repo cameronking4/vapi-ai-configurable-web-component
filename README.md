@@ -2,7 +2,7 @@
 
 ### Integrate Vapi Voice AI into your web applications effortlessly.
 
-Consume `<VapiWeb />` in your React or Next.js app & simplify everything with a component with all functionality you need baked-in. `<VapiWeb />` is intentionally designed for you to seamlessly integrate Vapi Voice AI services into your web applications. This component is turnkey: developers can effortlessly start and manage voice calls, handle various events, support function-calling, display live transcripts, and customize the UI.
+Add `<VapiComponent />` in your React or Next.js app & simplify Voice AI integrations. VapiComponent has everything you need baked-in and wraps all functionality and types for easy development. `<VapiComponent />` is intentionally designed for you to seamlessly integrate Vapi Voice AI services into your web applications. This component is turnkey: developers can effortlessly start and manage voice calls, handle various events, support function-calling, display live transcripts, and customize the UI.
 
 
 
@@ -31,36 +31,55 @@ npm install vapi-web
 
 
 ## **Usage**
-To use the `<VapiComponent />`, import it into your application and configure it with the necessary props.
+To use the `VapiComponent`, import it into your application and configure it with the necessary props.
 
+```jsx
+import { VapiComponent } from "vapi-web"
+<VapiComponent
+  publicKey="your-public-key"
+  assistantId="Your AssistantId from Vapi Dashboard or API" />
+```
 
 
 ### **Props**
 
+| Prop                   | Type        | Description                                                              | Default                 |
+|------------------------|-------------|--------------------------------------------------------------------------|-------------------------|
+| `publicKey`            | `string`    | Your Vapi public key for authentication.                                 |                         |
+| `assistantId`          | `string`    | The ID of the pre-configured assistant.                                  |                         |
+| `assistantConfig`      | `object`    | Inline configuration if `assistantId` is not provided.                   |                         |
+| `assistantOverrides`   | `object`    | Configuration overrides for the assistant.                               |                         |
+| `onEvents`             | `object`    | Handlers for various Vapi events (e.g., call-start, message).            |                         |
+| `startButtonLabel`     | `string`    | Label for the start call button.                                         | `"Start Call"`          |
+| `stopButtonLabel`      | `string`    | Label for the stop call button.                                          | `"Stop Call"`           |
+| `muteButtonLabel`      | `string`    | Label for the mute button.                                               | `"Mute"`                |
+| `unmuteButtonLabel`    | `string`    | Label for the unmute button.                                             | `"Unmute"`              |
+| `logActionButtonLabel` | `string`    | Label for the log action button.                                         | `"Log Action"`          |
+| `logActionMessage`     | `string`    | Message that will be logged when log action button is pressed.           | `"The user has pressed the button, say peanuts"` |
+| `showLogActionButton`  | `boolean`   | Whether to show the log action button or not.                            | `true`                  |
+| `callStatusLabel`      | `string`    | Label for the call status display.                                       | `"Call Status"`         |
+| `transcriptLabel`      | `string`    | Label for the transcript display.                                        | `"Transcript"`          |
+| `onStart`              | `function`  | Callback when the start button is clicked.                               |                         |
+| `onStop`               | `function`  | Callback when the stop button is clicked.                                |                         |
+| `onMuteToggle`         | `function`  | Callback when the mute button is toggled.                                |                         |
+| `onTranscriptUpdate`   | `function`  | Callback when transcript updates.                                        |                         |
+| `showTranscript`       | `boolean`   | Show/hide transcript display.                                            | `true`                  |
+| `autoStart`            | `boolean`   | Automatically start the assistant when component mounts.                 | `false`                 |
+| `onFunctionCall`       | `function`  | Callback for function calls received in messages.                        |                         |
+| `styles`               | `object`    | Custom styles for various elements.                                      | 
 
+        
 
-| Prop               | Type                       | Description                                                      | Default       |
-|--------------------|----------------------------|------------------------------------------------------------------|---------------|
-| `publicKey`        | `string`                   | Your Vapi public key for authentication                          |               |
-| `assistantId`      | `string`                   | The ID of the pre-configured assistant                           |               |
-| `assistantConfig`  | `object`                   | Inline configuration if `assistantId` is not provided            |               |
-| `assistantOverrides`| `object`                  | Configuration overrides for the assistant                        |               |
-| `onEvents`         | `object`                   | Handlers for various Vapi events (e.g., call-start, message)     |               |
-| `startButtonLabel` | `string`                   | Label for the start call button                                  | `"Start Call"`|
-| `stopButtonLabel`  | `string`                   | Label for the stop call button                                   | `"Stop Call"` |
-| `muteButtonLabel`  | `string`                   | Label for the mute button                                        | `"Mute"`      |
-| `unmuteButtonLabel`| `string`                   | Label for the unmute button                                      | `"Unmute"`    |
-| `callStatusLabel`  | `string`                   | Label for the call status display                                | `"Call Status"`|
-| `transcriptLabel`  | `string`                   | Label for the transcript display                                 | `"Transcript"`|
-| `onStart`          | `function`                 | Callback when the start button is clicked                        |               |
-| `onStop`           | `function`                 | Callback when the stop button is clicked                         |               |
-| `onMuteToggle`     | `function`                 | Callback when the mute button is toggled                         |               |
-| `onTranscriptUpdate`| `function`                | Callback when transcript updates                                 |               |
-| `showTranscript`   | `boolean`                  | Show/hide transcript display                                     | `true`        |
-| `autoStart`        | `boolean`                  | Automatically start the assistant when component mounts          | `false`       |
-| `onFunctionCall`   | `function`                 | Callback for function calls received in messages                 |               |
-| `styles`           | `object`                   | Custom styles for various elements                               | `{}`          |
-
+## Styles:  *Styles Interface* detailing configurable styles.
+  - *container*: `React.CSSProperties | Style for the container element`.
+  - *buttonContainer*: `React.CSSProperties | Style for the button container`.
+  - *startButton*: `React.CSSProperties | Style for the start button`.
+  - *stopButton*: `React.CSSProperties | Style for the stop button`.
+  - *muteButton*: `React.CSSProperties | Style for the mute button`.
+  - *logActionButton*: `React.CSSProperties | (Style for the log action button)`.
+  - *statusContainer*: `React.CSSProperties | Style for the status container`.
+  - *transcriptContainer*: `React.CSSProperties | Style for the transcript container`.
+  - *transcriptEntry*: `React.CSSProperties | (Style for each transcript entry)`.
 
 
 ## **Example**
@@ -70,8 +89,11 @@ Here’s an advanced usage example that demonstrates complex setup, custom event
 // Example usage in a component or app/page.tsx
 import React from 'react';
 import VapiComponent from 'vapi-web';
+...
 
 const App = () => {
+  ...
+
   const handleEvents = {
     'call-start': () => console.log('Call started'),
     'call-end': () => console.log('Call ended'),
@@ -114,8 +136,8 @@ const App = () => {
         onEvents={handleEvents}
         startButtonLabel="Initiate Call"
         stopButtonLabel="End Call"
-        muteButtonLabel="Mute Audio"
-        unmuteButtonLabel="Unmute Audio"
+        muteButtonLabel="Mute Mic"
+        unmuteButtonLabel="Unmute Mic"
         callStatusLabel="Current Call Status"
         transcriptLabel="Live Transcript"
         onStart={() => console.log('Call started')}
@@ -129,9 +151,6 @@ const App = () => {
     </div>
   );
 };
-
-export default App;
-
 ```
 
 ### Key Highlights:
@@ -153,9 +172,9 @@ By leveraging all the props, this example demonstrates creating a highly configu
 This project is licensed under the MIT License.
 
 
-## **Contributing**
-We welcome contributions! Please read our [contributing guide](CONTRIBUTING.md) for more details.
-
 
 ## **Acknowledgements**
 Special thanks to the Vapi Team for their support and continuous development of the Vapi API.
+
+## Next Steps
+Work with Aceternity UI team to design beautiful styles / templates for a beautiful drop-in Voice AI solution

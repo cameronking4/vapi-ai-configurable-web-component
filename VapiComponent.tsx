@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Vapi from '@vapi-ai/web';
 
-// Define the types for use in other parts of the application
 export type VapiEventNames = 'call-start' | 'call-end' | 'speech-start' | 'speech-end' | 'volume-level' | 'message' | 'error';
 
 export interface TranscriptEntry {
@@ -113,10 +112,10 @@ const VapiComponent: React.FC<VapiComponentProps> = ({
           return updatedTranscripts;
         });
       }
-      if (message.type === 'function') {
-        const { functionName, functionArgs } = message;
+      if (message.type === 'function-call') {
+        const { name, parameters } = message.functionCall;
         if (onFunctionCall) {
-          onFunctionCall(functionName, functionArgs);
+          onFunctionCall(name, parameters);
         }
       }
     });
