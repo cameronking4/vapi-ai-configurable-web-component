@@ -20,6 +20,9 @@ export interface VapiComponentProps {
   stopButtonLabel?: string;
   muteButtonLabel?: string;
   unmuteButtonLabel?: string;
+  logActionButtonLabel?: string;
+  logActionMessage?: string;
+  showLogActionButton?: boolean;
   callStatusLabel?: string;
   transcriptLabel?: string;
   onStart?: () => void;
@@ -35,8 +38,10 @@ export interface VapiComponentProps {
     startButton?: React.CSSProperties;
     stopButton?: React.CSSProperties;
     muteButton?: React.CSSProperties;
+    logActionButton?: React.CSSProperties;
     statusContainer?: React.CSSProperties;
     transcriptContainer?: React.CSSProperties;
+    transcriptEntry?: React.CSSProperties;
   };
 }
 
@@ -50,6 +55,9 @@ const VapiComponent: React.FC<VapiComponentProps> = ({
   stopButtonLabel = "Stop Call",
   muteButtonLabel = "Mute",
   unmuteButtonLabel = "Unmute",
+  logActionButtonLabel = "Log Action",
+  logActionMessage = "The user has pressed the button, say peanuts",
+  showLogActionButton = true,
   callStatusLabel = "Call Status",
   transcriptLabel = "Transcript",
   onStart,
@@ -151,12 +159,43 @@ const VapiComponent: React.FC<VapiComponentProps> = ({
     }
   };
 
+  const logUserAction = () => {
+    console.log('Log User Action button clicked');
+    if (vapi) {
+      console.log('Sending system message through vapi.send');
+      vapi.send({
+        type: "add-message",
+        message: {
+          role: "system",
+          content: logActionMessage,
+        },
+      });
+      const newEntry: TranscriptEntry = {
+        timestamp: new Date().toISOString(),
+        role: "system",
+        text: logActionMessage,
+      };
+      setTranscripts(prev => {
+        const updatedTranscripts = [...prev, newEntry];
+        if (onTranscriptUpdate) {
+          onTranscriptUpdate(updatedTranscripts);
+        }
+        return updatedTranscripts;
+      });
+    } else {
+      console.error('Vapi instance is not available');
+    }
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.buttonContainer}>
         {!autoStart && <button style={styles.startButton} onClick={handleStartCall}>{startButtonLabel}</button>}
         <button style={styles.stopButton} onClick={handleStopCall}>{stopButtonLabel}</button>
         <button style={styles.muteButton} onClick={handleMuteToggle}>{isMuted ? unmuteButtonLabel : muteButtonLabel}</button>
+        {showLogActionButton && (
+          <button style={styles.logActionButton} onClick={logUserAction}>{logActionButtonLabel}</button>
+        )}
       </div>
       <div style={styles.statusContainer}>
         <p>{callStatusLabel}: {callStatus}</p>
@@ -164,13 +203,13 @@ const VapiComponent: React.FC<VapiComponentProps> = ({
       {showTranscript && (
         <div style={styles.transcriptContainer}>
           <p>{transcriptLabel}:</p>
-          <pre>
+          <div>
             {transcripts.length > 0 ? transcripts.map((entry, index) => (
-              <div key={index}>
+              <div key={index} style={styles.transcriptEntry}>
                 <strong>{entry.timestamp}</strong> [{entry.role}]: {entry.text}
               </div>
             )) : 'No transcript available'}
-          </pre>
+          </div>
         </div>
       )}
     </div>

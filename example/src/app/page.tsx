@@ -42,22 +42,6 @@ const Home = () => {
         },
       ],
     },
-    functions: {
-      exampleFunction: {
-        name: "exampleFunction",
-        description: "An example function that demonstrates function calling.",
-        parameters: {
-          type: "object",
-          properties: {
-            message: {
-              type: "string",
-              description: "A message to display in the alert."
-            }
-          },
-          required: ["message"]
-        }
-      }
-    },
     voice: {
       provider: "playht",
       voiceId: "jennifer",
@@ -78,8 +62,9 @@ const Home = () => {
   return (
     <div>
       <h1>Advanced Vapi Voice Assistant with AutoStart and Functions</h1>
+      <br/>
       <VapiComponent
-        publicKey={process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || ''}
+        publicKey="your-public-key"
         assistantConfig={assistantConfig}
         onEvents={handleEvents}
         startButtonLabel="Initiate Call"
@@ -94,6 +79,7 @@ const Home = () => {
         onTranscriptUpdate={handleTranscriptUpdate}
         onFunctionCall={handleFunctionCall}
         autoStart={false}  // Automatically starts the call
+        logActionMessage='The user has pressed the button, get their attention back nicely.'
         styles={customStyles}
       />
     </div>
