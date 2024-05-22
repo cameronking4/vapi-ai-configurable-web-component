@@ -4,6 +4,7 @@
 
 Add `<VapiComponent />` in your React or Next.js app & simplify Voice AI integrations. VapiComponent has everything you need baked-in and wraps all functionality and types for easy development. `<VapiComponent />` is intentionally designed for you to seamlessly integrate Vapi Voice AI services into your web applications. This component is turnkey: developers can effortlessly start and manage voice calls, handle various events, support function-calling, display live transcripts, and customize the UI.
 
+[Demo](https://vapi-web-package.vercel.app)
 
 
 ## **Features**
