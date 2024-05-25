@@ -16,7 +16,131 @@ Add `<VapiComponent />` in your React or Next.js app & simplify Voice AI integra
 - Customizable styles and labels for all UI elements.
 - Advanced assistant configurations for function calling during a conversation
 
+## **Blocks**
+### Particle Orb
+```tsx
+// components/ui/ParticleOrb.tsx
+"use client";
+import React, { useRef, useEffect, useState, useMemo } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Points, PointMaterial } from '@react-three/drei';
+import { animated, useSpring, config } from '@react-spring/three';
+import { VapiComponent, TranscriptEntry } from 'vapi-web';
+import { Line } from '@react-three/drei';
+import * as THREE from 'three';
 
+const ParticleOrb = () => {
+  const [volume, setVolume] = useState(0);
+  const [isCallActive, setIsCallActive] = useState(false);
+  const [transcript, setTranscript] = useState<string[]>([]);
+
+  const handleToggleCall = () => {
+    setIsCallActive((prev) => !prev);
+  };
+
+  const handleVolumeChange = (volume: number) => {
+    setVolume(volume);
+  };
+
+  const handleTranscriptUpdate = (transcripts: TranscriptEntry[]) => {
+    const newTranscripts = transcripts.map(entry => entry.text);
+    setTranscript((prev) => [...prev, ...newTranscripts]);
+    console.log(newTranscripts);
+  };
+
+  return (
+    <div className="flex flex-col justify-center bg-black items-center h-full relative">
+       <VapiComponent
+          publicKey={process.env.VAPI_PUBLIC_KEY}
+          assistantId={process.env.VAPI_ASSISTANT_ID}
+          // or use assistantConfig to define progrommatically
+          onStart={() => console.log('Call started')}
+          onStop={() => console.log('Call stopped')}
+          onVolumeChange={handleVolumeChange}
+          onTranscriptUpdate={handleTranscriptUpdate}
+          autoStart={isCallActive}
+          styles={{ container: { display: 'none', height: 0 } }}
+        />
+      <Canvas className="absolute top-0 left-0 w-full h-full" camera={{ position: [0, 0, 5] }} onMouseDown={handleToggleCall}>
+        <ambientLight intensity={1} />
+        <pointLight position={[10, 10, 10]} />
+        <ParticleSystem volume={volume} isCallActive={isCallActive} />
+      </Canvas>
+    </div>
+  );
+};
+
+const ParticleSystem = ({ volume, isCallActive }: { volume: number, isCallActive: boolean }) => {
+  const pointsRef = useRef<THREE.Points>(null);
+  const particles = useMemo<number[]>(() => {
+    const positions: number[] = [];
+    for (let i = 0; i < 10000; i++) {
+      const theta = Math.random() * 2 * Math.PI;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const x = 0.5 * Math.sin(phi) * Math.cos(theta);
+      const y = 0.5 * Math.sin(phi) * Math.sin(theta);
+      const z = 0.5 * Math.cos(phi);
+      positions.push(x, y, z);
+    }
+    return positions;
+  }, []);
+
+  const { scale } = useSpring({
+    scale: isCallActive ? 3.5 : 2,
+    config: { tension: 120, friction: 10 },
+  });
+
+  const { rotation } = useSpring({
+    rotation: isCallActive ? [Math.PI / 4, Math.PI / 4, 0] : [0, 0, 0],
+    config: config.molasses,
+  });
+
+  useFrame(() => {
+    if (pointsRef.current) {
+      pointsRef.current.rotation.y += 0.002;
+      pointsRef.current.rotation.x += 0.001;
+    }
+  });
+
+  const brainStrokeMaterial = useMemo(() => new THREE.LineBasicMaterial({ color: 0x4b0082 }), []);
+
+  const brainStrokes = useMemo(() => {
+    const lines: JSX.Element[] = [];
+    for (let i = 0; i < 50; i++) {
+      const points: THREE.Vector3[] = [];
+      for (let j = 0; j < 5; j++) {
+        const theta = Math.random() * 2 * Math.PI;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const r = 0.5 + Math.random() * 0.2;
+        const x = r * Math.sin(phi) * Math.cos(theta);
+        const y = r * Math.sin(phi) * Math.sin(theta);
+        const z = r * Math.cos(phi);
+        points.push(new THREE.Vector3(x, y, z));
+      }
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      lines.push(<Line key={i} geometry={geometry} material={brainStrokeMaterial} points={points} />);
+    }
+    return lines;
+  }, [brainStrokeMaterial]);
+
+  return (
+    <animated.group scale={scale as unknown as [number, number, number]} rotation={rotation as unknown as [number, number, number]} visible={true}>
+      <Points ref={pointsRef} positions={new Float32Array(particles)} stride={3}>
+        <PointMaterial
+          transparent
+          color="#ffffff"
+          size={0.008}
+          sizeAttenuation
+          depthWrite={true}
+        />
+      </Points>
+      {volume > 0.42 && brainStrokes}
+    </animated.group>
+  );
+};
+
+export default ParticleOrb;
+```
 
 ## **Installation**
 To install the package, run:
@@ -63,7 +187,7 @@ import { VapiComponent } from "vapi-web"
 | `onStart`              | `function`  | Callback when the start button is clicked.                               |                         |
 | `onStop`               | `function`  | Callback when the stop button is clicked.                                |                         |
 | `onMuteToggle`         | `function`  | Callback when the mute button is toggled.                                |                         |
-| `onVolumeLevel`  | `function`  | Callback for realtime volumne levels (0-1).                              |                         |
+| `onVolumeChange`       | `function`  | Callback for realtime volumne levels (0-1).                              |                         |
 | `onTranscriptUpdate`   | `function`  | Callback when transcript updates.                                        |                         |
 | `showTranscript`       | `boolean`   | Show/hide transcript display.                                            | `true`                  |
 | `autoStart`            | `boolean`   | Automatically start the assistant when component mounts.                 | `false`                 |
