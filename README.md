@@ -63,6 +63,7 @@ import { VapiComponent } from "vapi-web"
 | `onStart`              | `function`  | Callback when the start button is clicked.                               |                         |
 | `onStop`               | `function`  | Callback when the stop button is clicked.                                |                         |
 | `onMuteToggle`         | `function`  | Callback when the mute button is toggled.                                |                         |
+| `onVolumeLevel`  | `function`  | Callback for realtime volumne levels (0-1).                              |                         |
 | `onTranscriptUpdate`   | `function`  | Callback when transcript updates.                                        |                         |
 | `showTranscript`       | `boolean`   | Show/hide transcript display.                                            | `true`                  |
 | `autoStart`            | `boolean`   | Automatically start the assistant when component mounts.                 | `false`                 |
